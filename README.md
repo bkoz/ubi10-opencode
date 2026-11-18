@@ -38,5 +38,24 @@ The default image user is non-root UID `1001`.
 Mounted volumes replace the image directory permissions; ensure any mounted
 home or workspace volume is writable by the pod's assigned UID or groups.
 
+After creating the application with `oc new-app`, enable interactive stdin
+and a TTY on the Deployment. `oc new-app` has no direct flags for these
+settings. This patch rolls out a replacement pod; `stdinOnce: false` keeps
+stdin open between attach sessions:
+
+```sh
+oc patch deployment ubi10-opencode -n bk-sandboxes \
+  --type=strategic \
+  -p '{"spec":{"template":{"spec":{"containers":[{"name":"ubi10-opencode","stdin":true,"stdinOnce":false,"tty":true}]}}}}'
+
+oc rollout status deployment/ubi10-opencode -n bk-sandboxes
+```
+
+Attach to OpenCode running on OpenShift:
+
+```sh
+oc attach -it deployment/ubi10-opencode -n bk-sandboxes
+```
+
 The `openshift/` directory contains existing sandbox examples with their
 own image references; they are separate from this CLI image.
