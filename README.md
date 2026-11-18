@@ -29,5 +29,14 @@ For a private package, first use `podman login ghcr.io` with your GitHub
 username and a classic personal access token with `read:packages` access.
 Configure an AI provider using `/connect` inside OpenCode.
 
+The image supports OpenShift's arbitrary UID model. `HOME` and the XDG
+directories point to `/opt/app-root/src`, and that directory and `/workspace`
+use root group ownership with `chmod -R g=u`. OpenShift-assigned UIDs can
+write logs, configuration, cache, and project files through group `0`.
+The default image user is non-root UID `1001`.
+
+Mounted volumes replace the image directory permissions; ensure any mounted
+home or workspace volume is writable by the pod's assigned UID or groups.
+
 The `openshift/` directory contains existing sandbox examples with their
 own image references; they are separate from this CLI image.
