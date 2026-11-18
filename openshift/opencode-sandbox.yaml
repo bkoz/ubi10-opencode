@@ -1,0 +1,26 @@
+apiVersion: agents.x-k8s.io/v1beta1
+kind: Sandbox
+metadata:
+  name: opencode-sandbox
+spec:
+  podTemplate:
+    spec:
+      runtimeClassName: 
+      containers:
+      - name: opencode
+        image: ghcr.io/bkoz/ubi10-opencode
+        stdin: true
+        tty: true
+        env:
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: opencode-api-keys
+                key: OPENAI_API_KEY
+                optional: true
+          - name: GOOGLE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: opencode-api-keys
+                key: GOOGLE_API_KEY
+                optional: true
